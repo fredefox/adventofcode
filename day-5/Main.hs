@@ -1,10 +1,13 @@
 import qualified Data.List as L
-import DList (DList(), current, modifyCurrent)
+import DList (DList(), current, modifyCurrent, pretty)
 import qualified DList as DL
 import Control.Monad.State
 import Control.Monad.Except
 
 import Debug.Trace
+
+tracePretty x = trace (pretty x)
+tracePrettyId x = tracePretty x x
 
 main :: IO ()
 main = getContents >>= print . solve . parse
@@ -39,6 +42,14 @@ incr :: Solver ()
 incr = modify incr'
   where
     incr' (n, x) = (succ n, x)
+
+rule :: Int -> Int
+-- The rule for pt. 1 is just to increment.
+-- rule = succ
+-- The rule for pt. 2 is like so:
+rule n
+  | n < 3 = succ n
+  | otherwise = pred n
 
 getList :: Solver (DList Int)
 getList = gets snd
@@ -75,7 +86,7 @@ readCurrent :: Solver Int
 readCurrent = do
   -- n <- (\x -> trace ("Moving " ++ (show x)) x) <$> getCurrent
   n <- getCurrent
-  modCurrent succ
+  modCurrent rule
   incr
   return n
 

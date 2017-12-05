@@ -8,10 +8,22 @@ module DList
   , step
   , current
   , modifyCurrent
+  , Pretty(..)
   ) where
 
 import Data.Monoid
 import Control.Monad ((>=>))
+
+class Pretty a where
+  pretty :: a -> String
+
+instance Pretty Int where
+  pretty = show
+
+instance Pretty a => Pretty (DList a) where
+  pretty (DList xs ys) = s (reverse xs) ++ '|':(s ys)
+    where
+      s = concatMap pretty
 
 data DList a = DList [a] [a] deriving (Eq, Show)
 
